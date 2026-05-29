@@ -8,6 +8,7 @@
     "dev": "pnpm --parallel --filter @archive-vet/web --filter @archive-vet/shared-types dev",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "lighthouse": "python scripts/run_lighthouse.py"
   }
 }

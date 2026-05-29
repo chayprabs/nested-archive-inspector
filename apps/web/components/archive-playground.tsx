@@ -2,8 +2,8 @@
 
 import type { DiffResult, InspectResult } from "@archive-vet/shared-types";
 import { FileDrop, ResultPane, SamplePicker } from "@archive-vet/shared-ui";
-import { flattenTree } from "@/lib/flatten-tree";
-import { useMemo, useState } from "react";
+import { ArchiveTree, mergeExpandedBranch } from "@/components/archive-tree";
+import { useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 
 const samples = [
@@ -29,8 +29,8 @@ export function ArchivePlayground() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-
-  const rows = useMemo(() => (result ? flattenTree(result.tree) : []), [result]);
+  const [lastFile, setLastFile] = useState<File | null>(null);
+  const [expandingPath, setExpandingPath] = useState<string | null>(null);
 
   async function inspectFile(file: File) {
     setBusy(true);
@@ -46,13 +46,44 @@ export function ArchivePlayground() {
       if (!response.ok) {
         throw new Error(`Inspect failed (${response.status})`);
       }
-      setResult((await response.json()) as InspectResult);
+      const payload = (await response.json()) as InspectResult;
+      setResult(payload);
+      setLastFile(file);
       setDiff(null);
     } catch (inspectError) {
       setError(inspectError instanceof Error ? inspectError.message : "Inspect failed");
       setResult(null);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function expandNestedEntry(entryPath: string) {
+    if (!lastFile || !result) {
+      return;
+    }
+    setExpandingPath(entryPath);
+    setError(null);
+    try {
+      const body = new FormData();
+      body.append("file", lastFile, lastFile.name);
+      body.append("entry_path", entryPath);
+      if (password) {
+        body.append("password", password);
+      }
+      const response = await fetch("/api/worker/v1/inspect/expand", { method: "POST", body });
+      if (!response.ok) {
+        throw new Error(`Expand failed (${response.status})`);
+      }
+      const children = (await response.json()) as InspectResult["tree"];
+      setResult({
+        ...result,
+        tree: mergeExpandedBranch(result.tree, entryPath, children)
+      });
+    } catch (expandError) {
+      setError(expandError instanceof Error ? expandError.message : "Expand failed");
+    } finally {
+      setExpandingPath(null);
     }
   }
 
@@ -73,7 +104,9 @@ export function ArchivePlayground() {
       if (!response.ok) {
         throw new Error(`URL inspect failed (${response.status})`);
       }
-      setResult((await response.json()) as InspectResult);
+      const payload = (await response.json()) as InspectResult;
+      setResult(payload);
+      setLastFile(null);
       setDiff(null);
     } catch (inspectError) {
       setError(inspectError instanceof Error ? inspectError.message : "URL inspect failed");
@@ -211,20 +244,13 @@ export function ArchivePlayground() {
 
       {result ? (
         <ResultPane title={`${result.filename} (${result.summary.entryCount} entries)`}>
-          <Virtuoso
-            className="tree-panel"
-            style={{ height: 420 }}
-            data={rows}
-            itemContent={(_index, entry) => (
-              <div className="tree-row">
-                <span>{entry.path}</span>
-                <span>
-                  {entry.size} B
-                  {entry.flags.length ? ` · ${entry.flags.join(",")}` : ""}
-                </span>
-              </div>
-            )}
-          />
+          <div className="tree-panel" style={{ maxHeight: 420, overflow: "auto" }}>
+            <ArchiveTree
+              nodes={result.tree}
+              onExpand={(path) => void expandNestedEntry(path)}
+              expandingPath={expandingPath}
+            />
+          </div>
         </ResultPane>
       ) : null}
 
