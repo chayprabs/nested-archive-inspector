@@ -1,0 +1,3 @@
+Contact: mailto:security@example.com
+Preferred-Languages: en
+Policy: https://github.com/chayprabs/nested-archive-inspector/blob/main/SECURITY.md

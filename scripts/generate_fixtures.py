@@ -5,7 +5,10 @@ from __future__ import annotations
 
 import io
 import json
+import shutil
+import subprocess
 import tarfile
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -79,6 +82,39 @@ def write_iso_sample(path: Path) -> None:
     iso.close()
 
 
+def try_write_rar_sample(path: Path) -> bool:
+    seven_zip = shutil.which("7z") or shutil.which("7zz")
+    if not seven_zip:
+        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        sample = Path(temp_dir) / "README.txt"
+        sample.write_text("ArchiveVet RAR sample\n", encoding="utf-8")
+        completed = subprocess.run(
+            [seven_zip, "a", "-trar", str(path), str(sample)],
+            capture_output=True,
+            check=False,
+        )
+    return completed.returncode == 0 and path.exists()
+
+
+def try_write_dmg_sample(path: Path) -> bool:
+    """Best-effort DMG placeholder via 7-Zip; real DMG requires macOS hdiutil in release CI."""
+    seven_zip = shutil.which("7z") or shutil.which("7zz")
+    if not seven_zip:
+        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        sample = Path(temp_dir) / "README.txt"
+        sample.write_text("ArchiveVet DMG sample\n", encoding="utf-8")
+        completed = subprocess.run(
+            [seven_zip, "a", "-tgzip", str(path), str(sample)],
+            capture_output=True,
+            check=False,
+        )
+    return completed.returncode == 0 and path.exists()
+
+
 def write_encrypted_7z(path: Path, password: str = "demo") -> None:
     import py7zr
 
@@ -129,6 +165,11 @@ def main() -> None:
     write_zip(FIXTURES / "zip-bomb-small.zip", bomb)
     write_zip(SAMPLES / "zip-bomb-small.zip", bomb)
     write_zip(ADVERSARIAL / "zip-bomb-small.zip", bomb)
+
+    if try_write_rar_sample(FIXTURES / "rar3.rar"):
+        shutil.copy(FIXTURES / "rar3.rar", SAMPLES / "rar3.rar")
+    if try_write_dmg_sample(FIXTURES / "dmg-sample.dmg"):
+        shutil.copy(FIXTURES / "dmg-sample.dmg", SAMPLES / "dmg-sample.dmg")
 
     manifest = {
         "expectedTotalChanges": 67,
