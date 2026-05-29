@@ -6,8 +6,7 @@ from pathlib import Path
 import libarchive
 
 from src.core.formats import detect_format
-from src.core.inspect_dispatch import inspect_archive_file
-from src.core.tree import _ARCHIVE_EXTENSIONS
+from src.core.tree import _ARCHIVE_EXTENSIONS, build_tree_from_path
 from src.models import ArchiveEntry
 
 
@@ -45,6 +44,8 @@ def expand_nested_entry(archive_path: Path, member_path: str, job_id: str) -> li
                 handle.write(payload)
                 inner_path = Path(handle.name)
             try:
+                from src.core.inspect_dispatch import inspect_archive_file
+
                 inspection = inspect_archive_file(inner_path, job_id, Path(normalized).name)
                 return inspection.tree
             finally:
