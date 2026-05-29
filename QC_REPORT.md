@@ -4,7 +4,7 @@
 |---|---|
 | Tool | ArchiveVet |
 | Branch | `cursor/archive-vet-build` |
-| Commit SHA | `6ab609e` |
+| Commit SHA | `dba7bbb` |
 | Date | 2026-05-29 |
 
 ## Checks run
