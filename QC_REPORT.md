@@ -4,7 +4,7 @@
 |---|---|
 | Tool | ArchiveVet |
 | Branch | `cursor/archive-vet-build` |
-| Commit SHA | `9e14cad` |
+| Commit SHA | `061d3c9` |
 | Date | 2026-05-29 |
 
 ## Checks run
@@ -20,6 +20,8 @@
 | `pytest` (worker) | VERIFY-DEFERRED | Host Python 3.14 / no libarchive-dev |
 | `docker compose config` | VERIFY-DEFERRED | Docker CLI unavailable on Windows host |
 | Playwright smoke | PASS (local) | Home workbench visible after `pnpm build` |
+| Playwright diff e2e | PASS (CI) | Worker started in CI job; compares release tarballs |
+| `iso-sample.iso` | PASS | Generated via pycdlib in fixtures + samples |
 
 ## Passed (cumulative)
 
@@ -37,7 +39,7 @@
 - F2 one-click lazy expand in web UI (API exists)
 - F9.3 signed-in history (out of scope for anonymous v1 unless added)
 - Hosted Lighthouse >= 95, perf budgets, full checklist Section 1.20 e2e on preview
-- PRD samples 5–6 (DMG, ISO) not yet in `public/samples/`
+- PRD sample `dmg-sample.dmg` not yet in `public/samples/` (ISO added)
 - Docker/runtime verification on healthy host / CI only
 
 ## VERIFY-DEFERRED evidence
