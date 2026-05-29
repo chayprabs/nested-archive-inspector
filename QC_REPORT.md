@@ -4,7 +4,7 @@
 |---|---|
 | Tool | ArchiveVet |
 | Branch | `cursor/archive-vet-build` |
-| Commit SHA | _(see latest push)_ |
+| Commit SHA | `9e14cad` |
 | Date | 2026-05-29 |
 
 ## Checks run
@@ -14,53 +14,47 @@
 | `pnpm install` | PASS | Workspace installs cleanly |
 | `pnpm lint` | PASS | All TS packages |
 | `pnpm typecheck` | PASS | |
-| `pnpm test` | PASS | Vitest (packages + web passWithNoTests) |
-| `pnpm build` | PASS | Next.js standalone build |
-| `python scripts/generate_fixtures.py` | PASS | Samples + worker fixtures |
-| `pytest` (worker) | VERIFY-DEFERRED | Host Python 3.14; pydantic wheel build fails. CI uses Python 3.12 + `libarchive-dev` |
-| `docker compose config` | VERIFY-DEFERRED | Docker CLI unavailable on verifier host (`docker: unknown command: docker compose`) |
+| `pnpm test` | PASS | Vitest + `test_share` (no libarchive on host) |
+| `pnpm build` | PASS | Next.js standalone + `/s/[token]` route |
+| `python scripts/generate_fixtures.py` | PASS | 7 samples + adversarial + acceptance manifest |
+| `pytest` (worker) | VERIFY-DEFERRED | Host Python 3.14 / no libarchive-dev |
+| `docker compose config` | VERIFY-DEFERRED | Docker CLI unavailable on Windows host |
+| Playwright smoke | PASS (local) | Home workbench visible after `pnpm build` |
 
-## Passed (this iteration)
+## Passed (cumulative)
 
-- Monorepo scaffold: `apps/web`, `apps/worker`, `packages/shared-*`, compose files, CI workflows
-- Worker routes: `/health`, `/v1/inspect`, `/v1/extract`, `/v1/diff`
-- Core safety flags (path traversal, symlink escape, compression ratio)
-- Hierarchical tree nesting (F2) + per-file SHA-256 for diff
-- Acceptance fixtures: `release-1.2.0.tar.gz`, `release-1.3.0.tar.gz`, `nested-release.tar.gz`, `acceptance-manifest.json`
-- Acceptance tests `test_acceptance.py` (A3=67 changes, A5=12 `.so` paths) — run in CI with libarchive
-- Web playground with FileDrop, SamplePicker, virtualized tree (react-virtuoso)
-- AGPL LICENSE, README, SECURITY, CONTRIBUTING, CODE_OF_CONDUCT
-- Sample fixtures under `apps/web/public/samples/`
+- Pattern-1 monorepo: `apps/web`, `apps/worker`, `packages/shared-*`, compose, CI
+- Worker: inspect, inspect/url, inspect/expand, extract, repack, diff, share, health
+- F2 hierarchical tree + lazy nested markers; F4 glob `**/*`; F5 repack zip/tar.gz
+- F7 7z passwords; F8 URL ingest; F9 share links + `/s/[token]` page
+- A3/A3 fixtures + tests (67 diff changes); A5 extract test (12 `.so`)
+- Web: inspect/diff modes, URL + password fields, share link, samples picker
+- Docs: README, AGPL LICENSE, SECURITY, CONTRIBUTING, CODE_OF_CONDUCT
 
-## Remaining (blocking product completion)
+## Remaining (blocking QUALIFIED)
 
-- F1 full format matrix (7z, RAR, ISO, DMG, CAB, NSIS, …) beyond libarchive ZIP/TAR baseline
-- F2 nested lazy-expand tree (currently flat libarchive walk)
-- F5 repack endpoint
-- F7 password-protected archives
-- F8 URL ingest, F9 share/history
-- PRD acceptance A3/A5 — fixtures + unit tests added; e2e/hosted verification still pending
-- Lighthouse >= 95, perf budgets, e2e Playwright
-- Hosted deployment verification
+- F1 full native format matrix (RAR, ISO, DMG, CAB, NSIS) beyond libarchive baseline
+- F2 one-click lazy expand in web UI (API exists)
+- F9.3 signed-in history (out of scope for anonymous v1 unless added)
+- Hosted Lighthouse >= 95, perf budgets, full checklist Section 1.20 e2e on preview
+- PRD samples 5–6 (DMG, ISO) not yet in `public/samples/`
+- Docker/runtime verification on healthy host / CI only
 
 ## VERIFY-DEFERRED evidence
 
 ```text
-# Worker pytest (local)
-Python 3.14 + pydantic-core build: PyO3 max supported 3.13
-ModuleNotFoundError: libarchive (no libarchive-dev on Windows host)
-
-# Docker
-docker compose config -> docker: unknown command: docker compose
+pytest on Windows host: Python 3.14 / ModuleNotFoundError: libarchive
+docker compose config: docker: unknown command: docker compose
 ```
 
-Rerun on CI / healthy host:
+Rerun:
 
 ```bash
 cd apps/worker && pip install -r requirements.txt && pytest -q
 docker compose config && docker compose up --build
+pnpm --filter @archive-vet/web exec playwright test
 ```
 
 ## Verdict
 
-**IN PROGRESS** — Foundation shipped and web build passes; not yet QUALIFIED per `RELEASE_QUALIFICATION_CHECKLIST.md` Section 1.
+**IN PROGRESS** — Core playground and acceptance unit tests exist; not yet **QUALIFIED** per `RELEASE_QUALIFICATION_CHECKLIST.md` Section 1.
