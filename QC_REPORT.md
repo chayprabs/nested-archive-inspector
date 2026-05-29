@@ -4,7 +4,7 @@
 |---|---|
 | Tool | ArchiveVet |
 | Branch | `cursor/archive-vet-build` |
-| Commit SHA | `061d3c9` |
+| Commit SHA | `6ab609e` |
 | Date | 2026-05-29 |
 
 ## Checks run
@@ -36,9 +36,9 @@
 ## Remaining (blocking QUALIFIED)
 
 - F1 full native format matrix (RAR, ISO, DMG, CAB, NSIS) beyond libarchive baseline
-- F2 one-click lazy expand in web UI (API exists)
+- F2 lazy expand wired in web UI (`Expand` on nested archive nodes)
 - F9.3 signed-in history (out of scope for anonymous v1 unless added)
-- Hosted Lighthouse >= 95, perf budgets, full checklist Section 1.20 e2e on preview
+- Hosted Lighthouse >= 95 (`pnpm lighthouse` script added; scores not yet verified on this host)
 - PRD sample `dmg-sample.dmg` not yet in `public/samples/` (ISO added)
 - Docker/runtime verification on healthy host / CI only
 
