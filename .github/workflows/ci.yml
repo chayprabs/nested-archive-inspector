@@ -21,6 +21,12 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      - name: Install Playwright browsers
+        run: pnpm --filter @archive-vet/web exec playwright install chromium
+      - name: E2E smoke (web only)
+        run: pnpm --filter @archive-vet/web exec playwright test
+        env:
+          CI: "true"
 
   worker:
     runs-on: ubuntu-latest

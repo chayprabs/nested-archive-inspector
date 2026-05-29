@@ -9,6 +9,7 @@ from src.routes.diff import router as diff_router
 from src.routes.extract import router as extract_router
 from src.routes.health import router as health_router
 from src.routes.inspect import router as inspect_router
+from src.routes.repack import router as repack_router
 
 
 def _load_cors_origins() -> list[str]:
@@ -35,3 +36,4 @@ app.include_router(health_router)
 app.include_router(inspect_router)
 app.include_router(extract_router)
 app.include_router(diff_router)
+app.include_router(repack_router)

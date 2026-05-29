@@ -11,17 +11,12 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
 from src.core.flags import blocked_extract
+from src.core.glob_match import glob_match
 from src.core.sandbox import job_workspace, normalize_extract_path
 from src.core.tree import build_tree_from_path
 from src.models import InspectResult
 
 router = APIRouter(prefix="/v1", tags=["extract"])
-
-
-def _glob_match(pattern: str, path: str) -> bool:
-    import fnmatch
-
-    return fnmatch.fnmatch(path.replace("\\", "/"), pattern.replace("\\", "/"))
 
 
 @router.post("/extract")
@@ -48,7 +43,7 @@ async def extract_selected(
                     pathname = entry.pathname or ""
                     if entry.isdir:
                         continue
-                    if not _glob_match(glob, pathname):
+                    if not glob_match(glob, pathname):
                         continue
                     safe_path = normalize_extract_path(pathname)
                     payload_bytes = b"".join(entry.get_blocks())
