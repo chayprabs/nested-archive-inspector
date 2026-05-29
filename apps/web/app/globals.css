@@ -85,3 +85,9 @@ body {
   padding: 0.55rem 1rem;
   cursor: pointer;
 }
+
+.action.secondary {
+  background: transparent;
+  color: #c5ceff;
+  border: 1px solid #4f6bff;
+}

@@ -60,3 +60,5 @@ export interface DiffResult {
   renamed: number;
   changes: DiffChange[];
 }
+
+export type ShareKind = "inspect" | "diff";

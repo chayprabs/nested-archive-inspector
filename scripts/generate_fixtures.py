@@ -107,6 +107,11 @@ def main() -> None:
     write_zip(FIXTURES / "nested-bundle.zip", outer)
     write_zip(SAMPLES / "nested-bundle.zip", outer)
 
+    bomb = {"bomb.bin": (b"0" * 50_000)}
+    write_zip(FIXTURES / "zip-bomb-small.zip", bomb)
+    write_zip(SAMPLES / "zip-bomb-small.zip", bomb)
+    write_zip(ADVERSARIAL / "zip-bomb-small.zip", bomb)
+
     manifest = {
         "expectedTotalChanges": 67,
         "added": 22,
