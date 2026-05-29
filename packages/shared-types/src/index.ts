@@ -31,6 +31,7 @@ export interface InspectSummary {
   formatGuess: string;
   flags: SafetyFlag[];
   blockedExtract: boolean;
+  warnings?: string[];
 }
 
 export interface InspectResult {

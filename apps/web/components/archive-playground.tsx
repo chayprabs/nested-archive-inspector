@@ -8,7 +8,9 @@ import { Virtuoso } from "react-virtuoso";
 const samples = [
   { id: "safe-release", label: "Safe release ZIP" },
   { id: "path-traversal", label: "Path traversal sample" },
-  { id: "nested-so", label: "Nested .so sample" }
+  { id: "nested-release", label: "Nested release (.so)" },
+  { id: "release-1.2.0", label: "Release 1.2.0 (diff)" },
+  { id: "release-1.3.0", label: "Release 1.3.0 (diff)" }
 ];
 
 export function ArchivePlayground() {
@@ -38,13 +40,15 @@ export function ArchivePlayground() {
   }
 
   async function loadSample(id: string) {
-    const response = await fetch(`/samples/${id}.zip`);
+    const extension = id.startsWith("release-") || id === "nested-release" ? ".tar.gz" : ".zip";
+    const response = await fetch(`/samples/${id}${extension}`);
     if (!response.ok) {
       setError(`Sample ${id} is not available yet`);
       return;
     }
     const blob = await response.blob();
-    await inspectFile(new File([blob], `${id}.zip`, { type: "application/zip" }));
+    const mime = extension === ".tar.gz" ? "application/gzip" : "application/zip";
+    await inspectFile(new File([blob], `${id}${extension}`, { type: mime }));
   }
 
   return (

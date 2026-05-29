@@ -4,7 +4,7 @@
 |---|---|
 | Tool | ArchiveVet |
 | Branch | `cursor/archive-vet-build` |
-| Commit SHA | `e1da64a` |
+| Commit SHA | _(see latest push)_ |
 | Date | 2026-05-29 |
 
 ## Checks run
@@ -25,9 +25,12 @@
 - Monorepo scaffold: `apps/web`, `apps/worker`, `packages/shared-*`, compose files, CI workflows
 - Worker routes: `/health`, `/v1/inspect`, `/v1/extract`, `/v1/diff`
 - Core safety flags (path traversal, symlink escape, compression ratio)
+- Hierarchical tree nesting (F2) + per-file SHA-256 for diff
+- Acceptance fixtures: `release-1.2.0.tar.gz`, `release-1.3.0.tar.gz`, `nested-release.tar.gz`, `acceptance-manifest.json`
+- Acceptance tests `test_acceptance.py` (A3=67 changes, A5=12 `.so` paths) — run in CI with libarchive
 - Web playground with FileDrop, SamplePicker, virtualized tree (react-virtuoso)
 - AGPL LICENSE, README, SECURITY, CONTRIBUTING, CODE_OF_CONDUCT
-- Sample ZIP fixtures under `apps/web/public/samples/`
+- Sample fixtures under `apps/web/public/samples/`
 
 ## Remaining (blocking product completion)
 
@@ -36,7 +39,7 @@
 - F5 repack endpoint
 - F7 password-protected archives
 - F8 URL ingest, F9 share/history
-- PRD acceptance A3 (67 diff changes), A5 (12 `.so` extracts) — fixtures not yet canonical
+- PRD acceptance A3/A5 — fixtures + unit tests added; e2e/hosted verification still pending
 - Lighthouse >= 95, perf budgets, e2e Playwright
 - Hosted deployment verification
 

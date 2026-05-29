@@ -39,6 +39,7 @@ class InspectSummary(BaseModel):
     formatGuess: str
     flags: list[SafetyFlag]
     blockedExtract: bool
+    warnings: list[str] = Field(default_factory=list)
 
 
 class InspectResult(BaseModel):
