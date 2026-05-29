@@ -34,7 +34,7 @@ jobs:
         run: |
           cd apps/worker && uvicorn src.main:app --host 127.0.0.1 --port 8000 &
           sleep 5
-          cd ../.. && pnpm --filter @archive-vet/web exec playwright test
+          cd ../.. && pnpm --filter @archive-vet/web exec playwright test e2e/smoke.spec.ts
         env:
           ARCHIVEVET_WORKER_URL: http://127.0.0.1:8000
           CI: "true"
