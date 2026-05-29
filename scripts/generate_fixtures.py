@@ -64,6 +64,14 @@ def _nested_release_so() -> dict[str, bytes]:
     return entries
 
 
+def write_encrypted_7z(path: Path, password: str = "demo") -> None:
+    import py7zr
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with py7zr.SevenZipFile(path, "w", password=password) as archive:
+        archive.writestr("secret.txt", "encrypted-content")
+
+
 def main() -> None:
     FIXTURES.mkdir(parents=True, exist_ok=True)
     SAMPLES.mkdir(parents=True, exist_ok=True)
@@ -86,6 +94,18 @@ def main() -> None:
     nested_so = _nested_release_so()
     write_targz(FIXTURES / "nested-release.tar.gz", nested_so)
     write_targz(SAMPLES / "nested-release.tar.gz", nested_so)
+
+    write_encrypted_7z(FIXTURES / "encrypted.7z")
+    write_encrypted_7z(SAMPLES / "encrypted.7z")
+
+    inner = {"inner/hello.txt": b"nested-inner"}
+    inner_buf = io.BytesIO()
+    with zipfile.ZipFile(inner_buf, "w") as inner_zip:
+        for name, payload in inner.items():
+            inner_zip.writestr(name, payload)
+    outer = {"bundle.zip": inner_buf.getvalue()}
+    write_zip(FIXTURES / "nested-bundle.zip", outer)
+    write_zip(SAMPLES / "nested-bundle.zip", outer)
 
     manifest = {
         "expectedTotalChanges": 67,

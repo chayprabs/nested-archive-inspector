@@ -10,7 +10,7 @@ from fastapi.responses import Response
 from src.core.flags import blocked_extract
 from src.core.repack import repack_archive
 from src.core.sandbox import job_workspace
-from src.core.tree import build_tree_from_path
+from src.core.inspect_dispatch import inspect_archive_file
 
 router = APIRouter(prefix="/v1", tags=["repack"])
 
@@ -30,7 +30,7 @@ async def repack_selected(
     with job_workspace() as workspace:
         target = workspace / f"input{suffix}"
         target.write_bytes(await file.read())
-        inspection = build_tree_from_path(target, job_id, file.filename or target.name)
+        inspection = inspect_archive_file(target, job_id, file.filename or target.name)
         if blocked_extract(inspection.summary.flags):
             raise HTTPException(status_code=403, detail="403_REPACK_BLOCKED_BY_FLAGS")
 

@@ -13,7 +13,7 @@ from fastapi.responses import StreamingResponse
 from src.core.flags import blocked_extract
 from src.core.glob_match import glob_match
 from src.core.sandbox import job_workspace, normalize_extract_path
-from src.core.tree import build_tree_from_path
+from src.core.inspect_dispatch import inspect_archive_file
 from src.models import InspectResult
 
 router = APIRouter(prefix="/v1", tags=["extract"])
@@ -31,7 +31,7 @@ async def extract_selected(
         target = workspace / f"input{suffix}"
         payload = await file.read()
         target.write_bytes(payload)
-        inspection: InspectResult = build_tree_from_path(target, job_id, file.filename or target.name)
+        inspection: InspectResult = inspect_archive_file(target, job_id, file.filename or target.name)
         if blocked_extract(inspection.summary.flags):
             raise HTTPException(status_code=403, detail="403_EXTRACT_BLOCKED_BY_FLAGS")
 
