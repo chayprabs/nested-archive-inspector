@@ -64,6 +64,21 @@ def _nested_release_so() -> dict[str, bytes]:
     return entries
 
 
+def write_iso_sample(path: Path) -> None:
+    import pycdlib
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    iso = pycdlib.PyCdlib()
+    iso.new(joliet=3)
+    iso.add_fp(
+        io.BytesIO(b"ArchiveVet ISO sample\n"),
+        len(b"ArchiveVet ISO sample\n"),
+        "/README.TXT;1",
+    )
+    iso.write(str(path))
+    iso.close()
+
+
 def write_encrypted_7z(path: Path, password: str = "demo") -> None:
     import py7zr
 
@@ -97,6 +112,9 @@ def main() -> None:
 
     write_encrypted_7z(FIXTURES / "encrypted.7z")
     write_encrypted_7z(SAMPLES / "encrypted.7z")
+
+    write_iso_sample(FIXTURES / "iso-sample.iso")
+    write_iso_sample(SAMPLES / "iso-sample.iso")
 
     inner = {"inner/hello.txt": b"nested-inner"}
     inner_buf = io.BytesIO()

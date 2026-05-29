@@ -13,6 +13,7 @@ const samples = [
   { id: "nested-release", label: "Nested release (.so)" },
   { id: "nested-bundle", label: "Nested bundle ZIP" },
   { id: "encrypted", label: "Encrypted 7z (demo)" },
+  { id: "iso-sample", label: "ISO sample" },
   { id: "release-1.2.0", label: "Release 1.2.0 (diff)" },
   { id: "release-1.3.0", label: "Release 1.3.0 (diff)" }
 ];
@@ -129,6 +130,8 @@ export function ArchivePlayground() {
       extension = ".tar.gz";
     } else if (id === "encrypted") {
       extension = ".7z";
+    } else if (id === "iso-sample") {
+      extension = ".iso";
     }
     const response = await fetch(`/samples/${id}${extension}`);
     if (!response.ok) {
