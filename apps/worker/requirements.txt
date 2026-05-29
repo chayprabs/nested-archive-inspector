@@ -1,0 +1,10 @@
+fastapi==0.115.12
+pydantic==2.11.3
+uvicorn[standard]==0.34.2
+python-multipart==0.0.20
+libarchive-c==5.1
+py7zr==0.22.0
+rarfile==4.2
+pycdlib==1.14.0
+pytest==8.3.5
+httpx==0.28.1

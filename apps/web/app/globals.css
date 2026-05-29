@@ -1,0 +1,87 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: #0b1020;
+  color: #eef2ff;
+}
+
+body {
+  margin: 0;
+}
+
+.shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+}
+
+.workbench {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.file-drop {
+  display: grid;
+  place-items: center;
+  border: 1px dashed #6b7cff;
+  border-radius: 1rem;
+  padding: 2rem;
+  cursor: pointer;
+}
+
+.file-drop input {
+  display: none;
+}
+
+.result-pane,
+.tree-panel,
+.flags-banner {
+  background: #121a33;
+  border: 1px solid #2a3768;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.flags-banner.danger {
+  border-color: #ff6b6b;
+  color: #ffd0d0;
+}
+
+.tree-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #1d2748;
+  font-family: ui-monospace, monospace;
+  font-size: 0.9rem;
+}
+
+.sample-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sample-picker button,
+.action {
+  background: #4f6bff;
+  color: white;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+}

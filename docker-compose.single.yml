@@ -1,0 +1,9 @@
+services:
+  archive-vet:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      ARCHIVEVET_WORKER_URL: http://127.0.0.1:8000
+    ports:
+      - "8080:8080"
